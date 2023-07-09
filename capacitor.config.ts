@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
-const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+const config = {
+  appId: 'io.ionic.airbnb',
   appName: 'AirBnB',
   webDir: 'www',
   server: {
