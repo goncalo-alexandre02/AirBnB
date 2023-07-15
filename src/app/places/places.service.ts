@@ -15,7 +15,7 @@ export class PlacesService {
     ),
     new Place(
       'p2',
-      'L\'Amour Toujours',
+      "L'Amour Toujours",
       'A romantic place in Paris.',
       'https://www.casadevalentina.com.br/wp-content/uploads/2021/04/APARTAMENTO-CLASSICO-PARISIENSE_MARCELORUDUIT_CASADEVALENTINA_DIVULGACAO-9-900x601.jpg.optimal.jpg',
       3000
@@ -33,4 +33,19 @@ export class PlacesService {
     return [...this._places];
   }
   constructor() {}
+
+  getPlace(id: string): Place {
+    const foundPlace = this._places.find((p) => p.id === id);
+    if (foundPlace) {
+      return foundPlace;
+    } else {
+      return {
+        id: '', // Provide a default value for id
+        title: '',
+        description: '',
+        imageUrl: '',
+        price: 0,
+      };
+    }
+  }
 }
