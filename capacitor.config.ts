@@ -5,7 +5,8 @@ const config = {
   appName: 'AirBnB',
   webDir: 'www',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    baseUrl: 'http://localhost:4200/'
   }
 };
 
