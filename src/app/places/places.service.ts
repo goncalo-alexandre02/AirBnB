@@ -11,21 +11,28 @@ export class PlacesService {
       'Manhattan Mansion',
       'In the heart of New York City.',
       'https://upload.wikimedia.org/wikipedia/commons/8/8f/Cooper_Hewitt_%2848059131921%29.jpg',
-      20000
+      20000,
+      new Date('2019-01-01'),
+      new Date('2019-12-31')
     ),
     new Place(
       'p2',
       "L'Amour Toujours",
       'A romantic place in Paris.',
       'https://www.casadevalentina.com.br/wp-content/uploads/2021/04/APARTAMENTO-CLASSICO-PARISIENSE_MARCELORUDUIT_CASADEVALENTINA_DIVULGACAO-9-900x601.jpg.optimal.jpg',
-      3000
+      3000,
+      new Date('2021-04-04'), 
+      new Date('2021-04-05')
+
     ),
     new Place(
       'p3',
       'The Foggy Palace',
       'Not you average city trip.',
       'https://favim.com/orig/201106/28/castle-fog-foggy-hawarden-castle-mist-Favim.com-86047.jpg',
-      1199
+      1199,
+      new Date('2022-06-06'), 
+      new Date('2022-06-08')
     ),
   ];
 
@@ -45,6 +52,9 @@ export class PlacesService {
         description: '',
         imageUrl: '',
         price: 0,
+        availableFrom: new Date(), // Provide a default Date value for availableFrom
+        availableTo: new Date(),
+        
       };
     }
   }

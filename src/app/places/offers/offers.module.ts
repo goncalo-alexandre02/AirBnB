@@ -8,6 +8,7 @@ import { OffersPageRoutingModule } from './offers-routing.module';
 
 import { OffersPage } from './offers.page';
 import { Routes } from '@angular/router';
+import { OfferItemComponent } from './offer-item/offer-item.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,6 @@ const routes: Routes = [
     IonicModule,
     OffersPageRoutingModule
   ],
-  declarations: [OffersPage]
+  declarations: [OffersPage, OfferItemComponent]
 })
 export class OffersPageModule {}
