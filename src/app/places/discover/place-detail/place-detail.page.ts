@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ModalController, NavController } from '@ionic/angular';
+import {
+  ActionSheetController,
+  ModalController,
+  NavController,
+} from '@ionic/angular';
 import { PlacesService } from '../../places.service';
 import { Place } from '../../place.model';
 import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
@@ -16,7 +20,8 @@ export class PlaceDetailPage implements OnInit {
     private route: ActivatedRoute,
     private navCtrl: NavController,
     private placesService: PlacesService,
-    private modalCrtl: ModalController
+    private modalCtrl: ModalController,
+    private actionSheetCtrl: ActionSheetController
   ) {}
 
   ngOnInit() {
@@ -35,31 +40,50 @@ export class PlaceDetailPage implements OnInit {
   onBookPlace() {
     // this.router.navigateByUrl('/places/tabs/discover');
     // this.navCtrl.navigateBack('/places/tabs/discover');
-    this.modalCrtl
+    // this.navCtrl.pop();
+    this.actionSheetCtrl
+      .create({
+        header: 'Choose an Action',
+        buttons: [
+          {
+            text: 'Select Date',
+            handler: () => {
+              this.openBookingModal('select');
+            }
+          },
+          {
+            text: 'Random Date',
+            handler: () => {
+              this.openBookingModal('random');
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel'
+          }
+        ]
+      })
+      .then(actionSheetEl => {
+        actionSheetEl.present();
+      });
+  }
+
+  openBookingModal(mode: 'select' | 'random') {
+    console.log(mode);
+    this.modalCtrl
       .create({
         component: CreateBookingComponent,
-        componentProps: {
-          selectedPlace: this.place,
-        },
-        
+        componentProps: { selectedPlace: this.place }
       })
-      .then((modalEl) => {
+      .then(modalEl => {
         modalEl.present();
-        modalEl.onDidDismiss();
+        return modalEl.onDidDismiss();
       })
-      .then((resultData:any) => {
-        if (resultData !== undefined && resultData !== null) {
-          console.log(resultData.data);
-          if (resultData.role === 'confirm') {
-            console.log('BOOKED!');
-          }
-        } else {
-          console.log('Error: Promise did not resolve to a defined value.');
+      .then(resultData => {
+        console.log(resultData.data, resultData.role);
+        if (resultData.role === 'confirm') {
+          console.log('BOOKED!');
         }
-      })
-      .catch(error => {
-        console.log('Error:', error);
       });
-      
   }
 }
