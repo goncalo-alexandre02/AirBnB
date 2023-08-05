@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   NavController,
   ModalController,
   ActionSheetController,
   LoadingController,
+  AlertController,
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
@@ -22,6 +23,7 @@ import { AuthService } from '../../../auth/auth.service';
 export class PlaceDetailPage implements OnInit, OnDestroy {
   place!: Place;
   isBookable = false;
+  isLoading = false;
   private placeSub!: Subscription;
 
   constructor(
@@ -32,7 +34,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private actionSheetCtrl: ActionSheetController,
     private bookingService: BookingService,
     private loadingCtrl: LoadingController,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertCtrl: AlertController,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -46,9 +50,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         // Handle the case when placeId is not available
         return;
       }
-      this.placeSub = this.placesService
-        .getPlace(placeId)
-        .subscribe((placeData) => {
+      this.isLoading = true;
+      this.placeSub = this.placesService.getPlace(placeId).subscribe(
+        (placeData) => {
           this.place = {
             id: placeData.id ?? '', // Use nullish coalescing to provide a default value if it's undefined
             title: placeData.title ?? '',
@@ -59,9 +63,22 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
             availableTo: placeData.availableTo ?? new Date(),
             userId: placeData.userId ?? '',
           };
-         this.isBookable = this.place.userId !== this.authService.userId;
-
-        });
+          this.isBookable = this.place.userId !== this.authService.userId;
+          this.isLoading = false;
+        },
+        (error) => {
+          this.alertCtrl.create({
+            header: 'An error ocurred!',
+            message: 'Could not load place.',
+            buttons: [{ text: 'Okay', handler: () => {
+              this.router.navigate(['/places/tabs/discover'])
+            } 
+          }],
+          }).then(alertEl =>{
+            alertEl.present()
+          });
+        }
+      );
     });
   }
 
@@ -95,19 +112,17 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
 
   openBookingModal(mode: 'select' | 'random') {
     console.log('Mode:', mode); // Check if the method is being called and the correct mode is passed
-  
+
     this.modalCtrl
       .create({
         component: CreateBookingComponent,
         componentProps: { selectedPlace: this.place, selectedMode: mode },
       })
       .then((modalEl) => {
-        
         modalEl.present();
         return modalEl.onDidDismiss();
       })
       .then((resultData) => {
-  
         if (resultData.role === 'confirm') {
           this.loadingCtrl
             .create({ message: 'Booking place...' })
@@ -133,7 +148,6 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         }
       });
   }
-  
 
   ngOnDestroy() {
     if (this.placeSub) {
